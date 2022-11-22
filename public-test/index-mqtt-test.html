@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feathers Example</title>
+  <link rel="stylesheet" href="//unpkg.com/feathers-chat@4.0.0/public/base.css">
+  <link rel="stylesheet" href="//unpkg.com/feathers-chat@4.0.0/public/chat.css">
+</head>
+<body>
+  <main id="main" class="container">
+    <h1>Welcome to Feathers</h1>
+    <form class="form" onsubmit="sendMessage(event.preventDefault())">
+      <input type="text" id="message-text" placeholder="Enter message here">
+      <button type="submit" class="button button-primary">Run report</button>
+    </form>
+    <div id="reportDiv">    
+      <a id="reportLink" target="_blank" href="http://localhost:3030/test.html">link text</a>
+    </div>  
+    <div id="statusDiv">  
+      <h2 id="statusMsg">Here are the current messages:</h2>  
+    </div>  
+
+    <h2>Here are the current messages:</h2>
+  </main>
+
+  <script src="//unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script type="text/javascript">
+   
+    // Set up socket.io
+    const socket = io('http://localhost:3030');
+    // Initialize a Feathers app
+    const app = feathers();
+    
+    var jobId = 0;
+
+    // Register socket.io to talk to our server
+    app.configure(feathers.socketio(socket));
+
+    var reportDiv = document.getElementById('reportDiv');
+    reportDiv.style.display = "none";
+
+    var statusDiv = document.getElementById('statusDiv');
+    statusDiv.style.display = "none";
+
+    
+    // Form submission handler that sends a new message
+    async function sendMessage () {
+      var statusMsg = document.getElementById('statusMsg');
+      statusMsg.innerHTML = 'report in progress...'
+      var statusDiv = document.getElementById('statusDiv');
+      statusDiv.style.display = "block";
+      // var statusDiv = document.getElementById('statusDiv');
+      // statusDiv.style.display = "block";
+      const messageInput = document.getElementById('message-text');
+      // Create a new message with the input field value
+      jobId = await app.service('reports').find({
+        text: messageInput.value
+      });
+      messageInput.value = '';
+      statusMsg = document.getElementById('statusMsg');
+      statusMsg.innerHTML += 'job id is ' + jobId;
+
+    }
+
+    // Renders a single message on the page
+    function addMessage (message) {
+      document.getElementById('main').innerHTML += `<p>${message.text}</p>`;
+    }
+
+        // Renders a single message on the page
+    function openReport (jobId) {
+      var statusMsg = document.getElementById('statusMsg');
+      statusMsg.innerHTML = 'report is finished... jobId is' + jobId
+      var statusDiv = document.getElementById('statusDiv');
+      statusDiv.style.display = "block";
+
+      var reportLink = document.getElementById('reportLink');
+      reportLink.setAttribute('href', 'http://localhost:3030/test.html');
+      var reportDiv = document.getElementById('reportDiv');
+      reportDiv.style.display = "block";
+      document.getElementById('main').innerHTML += `<p>test</p>`;
+    }
+
+    const main = async () => {
+      // Find all existing messages
+      const messages = await app.service('messages').find();
+
+      // Add existing messages to the list
+      messages.forEach(addMessage);
+
+      // Add any newly created message to the list in real-time
+      app.service('messages').on('created', addMessage);
+
+      // Add any newly created message to the list in real-time
+      app.service('reports').on('created', openReport);
+
+    };
+
+    main();
+  </script>
+</body>
+</html>

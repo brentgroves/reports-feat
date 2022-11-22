@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "nodemon src/",
+    "start": "node src/"
+  },
+  "dependencies": {
+    "@feathersjs/configuration": "^4.5.15",
+    "@feathersjs/express": "^4.5.15",
+    "@feathersjs/feathers": "^4.5.15",
+    "@feathersjs/socketio": "^4.5.15",
+    "mqtt": "^4.3.7"
+  }
+}
