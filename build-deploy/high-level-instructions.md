@@ -1,3 +1,8 @@
+pre-requisites:
+nvm install v18.12.1
+nvm use v18.12.1
+npm install @feathersjs/cli -g
+
 reports-react
 reports-feat
 React13319
@@ -16,7 +21,10 @@ if necessary rename the current public folder
 mv ~/src/reports-react/public ~/src/reports-react/public-test
 mkdir ~/src/reports-feat/public
 copy recursively with same permissions
+# For Production deployment
 cp -rp ~/src/reports-react/build/* ~/src/reports-feat/public
+# For development and debugging
+cp -rp ~/src/reports-react/public/* ~/src/reports-feat/public
 
 # run reports-feat
 pushd ~/src/reports-feat
