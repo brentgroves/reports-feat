@@ -104,14 +104,15 @@ app.service('messages').create({
 const options = {
   port: 30231,
   host: 'reports31',
-  clientId: 'myclient',
+  clientId: 'feat-reports31',
+  // clientId: 'myclient',
 };
 
 const client = mqtt.connect(options)
 
 client.on('connect', function () {
   console.log('connected to reports31')
-  client.subscribe('mytopic', function (err) {
+  client.subscribe('reports31-report-complete', function (err) {
     // if (!err) {
     //   client.publish('mytopic', 'Hello mqtt')
     // }
